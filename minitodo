@@ -1,0 +1,50 @@
+1  Formulate your problem: What do you want to classify?
+   'Which pair of color values in B-G-R can best classify skin'
+2  Read data and transform it into the prtools data format.
+   Deal with missing data (e.g. remove that object or feature).
+   If a feature is string valued, transform it into numbers (e.g. 0/1).
+   'hw5'
+3  Explore the data, e.g. by plotting feature vectors pairwise against
+   each other and calculating the correlation to see relations among
+   the features.
+   'hw3'/'slides3'
+4  If there is only two possible labels convert the class labels also
+   into numbers (e.g. 0/1) and correlate the features with the class
+   labels (feature selection).
+5  Perform principal component analysis, visualize the scores in 2
+   dimensions (the eigenvectors with highest eigenvalues).
+   Discuss how the eigenvectors are composed of the original features.
+   How many eigenvectors do you choose and why? Give the percentage of
+   preserved variance when using this number of eigenvectors.
+   'hw5'/'slides3'
+6  Possibly [apply clustering and calculate the optimal number of
+   clusters.]
+   'hw9'/'slides9'
+7  Possibly [apply density estimation.]
+   'slides4/slides5'
+8  Apply
+  1  parametric classifiers (e.g. quadratic discriminant analysis 'qdc',
+     linear discriminant analysis 'ldc', minimum distance classifier 'nmsc')
+  2  non-parametric classifiers (e.g. k-nearest neighbor classifier 'knnc',
+     [a neural net, a support vector machine]).
+  3  Possibly apply feature selection.
+  4  Possibly perform classification on the scores on the most prominent
+     eigenvectors or on the selected features (that might be especially
+     relevant if you have a high number of features).
+  5  Some classifiers may use massive computation time with full cross
+     validation on a large dataset. If you have a large data set, also
+     consider 'randomly' drawing a 'reasonably' smaller sample of the 
+     entire data set and analyze that one.
+  6  Use cross-validation for the classification. Use the number of folds
+     according to the size of the data set.
+9  Display the confusion matrix for each classifier and discuss class pairs
+   that are highly or little confused
+10 Compare the classifiers with an appropriate evaluation measure (e.g.
+   accuracy).
+11 If possible compare with a baseline performance value (e.g. random 
+   classification or a classifier that always predicts the same class,
+   no matter what the true class is).
+12 Discuss the results (possibly [speculate why which classifier performed
+   better and how that might relate to the number of data points, features,
+   the separability of the classes, the complexity/number of estimated
+   parameters of the algorithm])
