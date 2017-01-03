@@ -35,6 +35,7 @@
      validation on a large dataset. If you have a large data set, also
      consider 'randomly' drawing a 'reasonably' smaller sample of the 
      entire data set and analyze that one.
+     'must use cross validation'
   6  Use cross-validation for the classification. Use the number of folds
      according to the size of the data set.
 9  Display the confusion matrix for each classifier and discuss class pairs
@@ -44,6 +45,7 @@
 11 If possible compare with a baseline performance value (e.g. random 
    classification or a classifier that always predicts the same class,
    no matter what the true class is).
+   'not needed'
 12 Discuss the results (possibly [speculate why which classifier performed
    better and how that might relate to the number of data points, features,
    the separability of the classes, the complexity/number of estimated
