@@ -35,8 +35,8 @@ z = setname(z, 'Skin Segmentation');
 
 % plot feature vectors against each other and
 % calculate the correlation to see relations among the features
+corrRGB = corr(data)
 dataRG = [skinR skinG; nonSkinR nonSkinG];
-corrRG = corr(dataRG)
 zRG = prdataset(dataRG,labs);
 zRG = setlablist(zRG, char('Non Skin','Skin'));
 zRG = setfeatlab(zRG, char('R','G'));
@@ -46,7 +46,6 @@ figure
 scatterd(zRG,'legend')
 
 dataRB = [skinR skinB; nonSkinR nonSkinB];
-corrRB = corr(dataRB)
 zRB = prdataset(dataRB,labs);
 zRB = setlablist(zRB, char('Non Skin','Skin'));
 zRB = setfeatlab(zRB, char('R','B'));
@@ -56,7 +55,6 @@ figure
 scatterd(zRB,'legend')
 
 dataGB = [skinG skinB; nonSkinG nonSkinB];
-corrGB = corr(dataGB)
 zGB = prdataset(dataGB,labs);
 zGB = setlablist(zGB, char('Non Skin','Skin'));
 zGB = setfeatlab(zGB, char('G','B'));
@@ -87,3 +85,14 @@ for j = 1:3
 end
 set(gca,'XTick',[1 2 3],'XTickLabel',{'R','G','B'})
 legend('1. Eigvec','2. Eigvec','3. Eigvec')
+
+[R,C] = size(data);
+datac = data - ones(R,1)*mean(data); % centering data
+scores = datac*V(:,1:2); % projection on eigenvectors with highest eigval
+z = prdataset(scores,skinClass); % construct pr data
+f = figure; scatterd(z);
+
+relcumeig = sum(eigval(1:2))/sum(eigval);
+cs = cumsum(eigval)/sum(eigval);
+f = figure; plot(cs);
+set(gca, 'XTick', [1 2 3], 'XTickLabel', {'1.','2.','3.'})
