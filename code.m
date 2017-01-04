@@ -1,6 +1,9 @@
 % Property of Michael Castanieto
 % All Rights Reserved 
 % Do Not Copy -- GET YOUR OWN CODE!!!
+close all
+clear
+
 prpath = 'prtools';
 addpath(prpath);
 
@@ -86,13 +89,90 @@ end
 set(gca,'XTick',[1 2 3],'XTickLabel',{'R','G','B'})
 legend('1. Eigvec','2. Eigvec','3. Eigvec')
 
-[R,C] = size(data);
-datac = data - ones(R,1)*mean(data); % centering data
+[row,col] = size(data);
+datac = data - ones(row,1)*mean(data); % centering data
 scores = datac*V(:,1:2); % projection on eigenvectors with highest eigval
+datar = scores*V(:,1:2)' + ones(row,1)*mean(data); % reconstructed data
 z = prdataset(scores,skinClass); % construct pr data
+f = figure; scatterd(z);
+
+% TODO
+% display reconstructed data
+%labs = genlab([sampleSkinLength, sampleNonSkinLength]);
+%z = prdataset(datar,labs);
+z = prdataset(datar(:,1:2),skinClass); % construct pr data
+%z = setlablist(z, char('Non Skin','Skin'));
+%z = setfeatlab(z, char('R','G','B'));
+%z = setprior(z,[sampleSkinLength; sampleNonSkinLength]/sampleLength);
+%z = setname(z, 'Skin Segmentation');
 f = figure; scatterd(z);
 
 relcumeig = sum(eigval(1:2))/sum(eigval);
 cs = cumsum(eigval)/sum(eigval);
 f = figure; plot(cs);
 set(gca, 'XTick', [1 2 3], 'XTickLabel', {'1.','2.','3.'})
+
+
+% test and training index
+tst_idx = randperm(row,round(row*0.20));
+tr_idx = setdiff(1:row,tst_idx);
+% create test and training data
+data = [R G B];
+tst_data = prdataset(data(tst_idx,:),skinClass(tst_idx));
+tr_data = prdataset(data(tr_idx,:),skinClass(tr_idx));
+
+% quadratic discriminant analysis
+w = qdc(tr_data);
+
+pred_lab = tst_data*w*labeld;
+errors = pred_lab~=skinClass(tst_idx);
+total_errors = sum(errors)
+
+% linear discriminant analysis
+w = ldc(tr_data);
+
+pred_lab = tst_data*w*labeld;
+errors = pred_lab~=skinClass(tst_idx);
+total_errors = sum(errors)
+
+% minimum distance classifier
+w = nmsc(tr_data);
+
+pred_lab = tst_data*w*labeld;
+errors = pred_lab~=skinClass(tst_idx);
+total_errors = sum(errors)
+
+% k-nearest neighbor classifier
+datak = data(randperm(row,round(row*0.10)),:); % randomly choose 10% of the data
+[row,col] = size(datak);
+tst_idx_k = randperm(row,round(row*0.20));
+tr_idx_k = setdiff(1:row,tst_idx_k);
+tst_datak = prdataset(datak(tst_idx_k,:),skinClass(tst_idx_k));
+tr_datak = prdataset(datak(tr_idx_k,:),skinClass(tr_idx_k));
+w = knnc(tr_datak);
+
+disp('knnc');
+pred_lab = tst_data*w*labeld;
+errors = pred_lab~=skinClass(tst_idx);
+total_errors = sum(errors)
+
+% quadratic discriminant analysis on 2 highest eigenvectors
+tst_scores = prdataset(scores(tst_idx,:),skinClass(tst_idx));
+tr_scores = prdataset(scores(tr_idx,:),skinClass(tr_idx));
+
+w = qdc(tr_scores);
+
+pred_lab = tst_scores*w*labeld;
+errors = pred_lab~=skinClass(tst_idx);
+total_errors = sum(errors)
+
+% quadratic discriminant analysis on the reconstructed data
+tst_datar = prdataset(datar(tst_idx,1:2),skinClass(tst_idx));
+tr_datar = prdataset(datar(tr_idx,1:2),skinClass(tr_idx));
+
+w = qdc(tr_datar);
+
+pred_lab = tst_datar*w*labeld;
+errors = pred_lab~=skinClass(tst_idx);
+total_errors = sum(errors)
+corr_rec = corr(datar)
