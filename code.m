@@ -120,6 +120,9 @@ tr_idx = setdiff(1:row,tst_idx);
 data = [R G B];
 tst_data = prdataset(data(tst_idx,:),skinClass(tst_idx));
 tr_data = prdataset(data(tr_idx,:),skinClass(tr_idx));
+% create a reduced data set
+idx_reduced = randperm(row,round(row*0.10)); % randomly choose 10% of the data
+data_reduced = data(idx_reduced,:); 
 
 % quadratic discriminant analysis
 disp('quadratic discriminant analysis')
@@ -144,6 +147,13 @@ acc = (tp+tn)/(tp+fp+fn+tn) % accuracy
 pred_lab = tst_data*w*labeld;
 errors = pred_lab~=skinClass(tst_idx);
 total_errors = sum(errors)
+
+% 10-fold cross validation on qdc
+z = prdataset(data_reduced,skinClass(idx_reduced));
+w = qdc([]);
+e = prcrossval(z,w,10);
+disp('10-fold qdc accurracy')
+a = 1 - e
 
 % linear discriminant analysis
 disp('linear discriminant analysis')
@@ -256,13 +266,21 @@ disp('quadratic discriminant analysis on the reconstructed data')
 tst_datar = prdataset(datar(tst_idx,1:2),skinClass(tst_idx));
 tr_datar = prdataset(datar(tr_idx,1:2),skinClass(tr_idx));
 
-% plot qda on reconstructed data
+
+% 10-fold cross validation on qdc
+z = prdataset(datar(idx_reduced,1:2),skinClass(idx_reduced)); % construct pr data
+w = qdc([]);
+e = prcrossval(z,w,10);
+disp('10-fold qdc accurracy of reconstructed data')
+a = 1 - e
+
+% plot qdc on reconstructed data
 w = qdc(tr_datar);
 h = figure;
 scatterd(z);
 hold on
 plotm(w)
-title('qda classification on the reconstructed data')
+title('qdc classification on the reconstructed data')
 text(0,200,['accuracy = '  num2str(acc*100) '%'], 'FontSize', 16);
 
 pred_lab = tst_datar*w*labeld;
