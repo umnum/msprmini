@@ -122,27 +122,79 @@ tst_data = prdataset(data(tst_idx,:),skinClass(tst_idx));
 tr_data = prdataset(data(tr_idx,:),skinClass(tr_idx));
 
 % quadratic discriminant analysis
+disp('quadratic discriminant analysis')
 w = qdc(tr_data);
+% display the confusion matrix
+d = tst_data*w;
+confmat(d)
+cm = confmat(d);
+% get true/false positive/negative values
+tp = cm(1,1) % true positive
+fn = cm(1,2) % false negative
+fp = cm(2,1) % false positive
+tn = cm(2,2) % true negative
+% calculate precision, recall, f-measure,
+% false alarm rate, and accuracy
+p = tp/(tp+fp) % precision
+r = tp/(tp+fn) % recall
+f = (2*p*r)/(p+r) % f-measure
+fa = fp/(tn+fp) % false alarm rate
+acc = (tp+tn)/(tp+fp+fn+tn) % accuracy
 
 pred_lab = tst_data*w*labeld;
 errors = pred_lab~=skinClass(tst_idx);
 total_errors = sum(errors)
 
 % linear discriminant analysis
+disp('linear discriminant analysis')
 w = ldc(tr_data);
+% display the confusion matrix
+d = tst_data*w;
+confmat(d)
+cm = confmat(d);
+% get true/false positive/negative values
+tp = cm(1,1) % true positive
+fn = cm(1,2) % false negative
+fp = cm(2,1) % false positive
+tn = cm(2,2) % true negative
+% calculate precision, recall, f-measure,
+% false alarm rate, and accuracy
+p = tp/(tp+fp) % precision
+r = tp/(tp+fn) % recall
+f = (2*p*r)/(p+r) % f-measure
+fa = fp/(tn+fp) % false alarm rate
+acc = (tp+tn)/(tp+fp+fn+tn) % accuracy
 
 pred_lab = tst_data*w*labeld;
 errors = pred_lab~=skinClass(tst_idx);
 total_errors = sum(errors)
 
 % minimum distance classifier
+disp('minimum distance classifier')
 w = nmsc(tr_data);
+% display the confusion matrix
+d = tst_data*w;
+confmat(d)
+cm = confmat(d);
+% get true/false positive/negative values
+tp = cm(1,1) % true positive
+fn = cm(1,2) % false negative
+fp = cm(2,1) % false positive
+tn = cm(2,2) % true negative
+% calculate precision, recall, f-measure,
+% false alarm rate, and accuracy
+p = tp/(tp+fp) % precision
+r = tp/(tp+fn) % recall
+f = (2*p*r)/(p+r) % f-measure
+fa = fp/(tn+fp) % false alarm rate
+acc = (tp+tn)/(tp+fp+fn+tn) % accuracy
 
 pred_lab = tst_data*w*labeld;
 errors = pred_lab~=skinClass(tst_idx);
 total_errors = sum(errors)
 
 % k-nearest neighbor classifier
+disp('k-nearest neighbor classifier')
 datak = data(randperm(row,round(row*0.10)),:); % randomly choose 10% of the data
 [row,col] = size(datak);
 tst_idx_k = randperm(row,round(row*0.20));
@@ -150,6 +202,22 @@ tr_idx_k = setdiff(1:row,tst_idx_k);
 tst_datak = prdataset(datak(tst_idx_k,:),skinClass(tst_idx_k));
 tr_datak = prdataset(datak(tr_idx_k,:),skinClass(tr_idx_k));
 w = knnc(tr_datak);
+% display the confusion matrix
+d = tst_data*w;
+confmat(d)
+cm = confmat(d);
+% get true/false positive/negative values
+tp = cm(1,1) % true positive
+fn = cm(1,2) % false negative
+fp = cm(2,1) % false positive
+tn = cm(2,2) % true negative
+% calculate precision, recall, f-measure,
+% false alarm rate, and accuracy
+p = tp/(tp+fp) % precision
+r = tp/(tp+fn) % recall
+f = (2*p*r)/(p+r) % f-measure
+fa = fp/(tn+fp) % false alarm rate
+acc = (tp+tn)/(tp+fp+fn+tn) % accuracy
 
 disp('knnc');
 pred_lab = tst_data*w*labeld;
@@ -157,20 +225,45 @@ errors = pred_lab~=skinClass(tst_idx);
 total_errors = sum(errors)
 
 % quadratic discriminant analysis on 2 highest eigenvectors
+disp('quadratic discriminant analysis on 2 highest eigenvectors')
 tst_scores = prdataset(scores(tst_idx,:),skinClass(tst_idx));
 tr_scores = prdataset(scores(tr_idx,:),skinClass(tr_idx));
 
 w = qdc(tr_scores);
+% display the confusion matrix
+d = tst_scores*w;
+confmat(d)
+cm = confmat(d);
+% get true/false positive/negative values
+tp = cm(1,1) % true positive
+fn = cm(1,2) % false negative
+fp = cm(2,1) % false positive
+tn = cm(2,2) % true negative
+% calculate precision, recall, f-measure,
+% false alarm rate, and accuracy
+p = tp/(tp+fp) % precision
+r = tp/(tp+fn) % recall
+f = (2*p*r)/(p+r) % f-measure
+fa = fp/(tn+fp) % false alarm rate
+acc = (tp+tn)/(tp+fp+fn+tn) % accuracy
 
 pred_lab = tst_scores*w*labeld;
 errors = pred_lab~=skinClass(tst_idx);
 total_errors = sum(errors)
 
 % quadratic discriminant analysis on the reconstructed data
+disp('quadratic discriminant analysis on the reconstructed data')
 tst_datar = prdataset(datar(tst_idx,1:2),skinClass(tst_idx));
 tr_datar = prdataset(datar(tr_idx,1:2),skinClass(tr_idx));
 
+% plot qda on reconstructed data
 w = qdc(tr_datar);
+h = figure;
+scatterd(z);
+hold on
+plotm(w)
+title('qda classification on the reconstructed data')
+text(0,200,['accuracy = '  num2str(acc*100) '%'], 'FontSize', 16);
 
 pred_lab = tst_datar*w*labeld;
 errors = pred_lab~=skinClass(tst_idx);
